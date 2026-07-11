@@ -1,21 +1,19 @@
-FROM public.ecr.aws/docker/library/node:26-alpine
+FROM node:18-alpine
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app 
 
-COPY ./app/package*.json ./
+COPY ./package*.json ./
 
-RUN npm ci --omit=dev
+RUN npm ci --only=production
 
-COPY app/index.js ./
+COPY ./index.js ./
 
-COPY ./app/public/ ./public
+COPY ./public/ ./public
 
 USER appuser
 
-EXPOSE 8080
-
-ENV APP_VERSION=1.0.0
+EXPOSE 3000
 
 CMD ["node", "index.js"]
