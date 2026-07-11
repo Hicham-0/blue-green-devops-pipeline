@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "main" {
   name                 = "${var.project}-${var.environment}"
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE"
 
   # Scan automatique à chaque push — détecte les vulnérabilités
   image_scanning_configuration {
