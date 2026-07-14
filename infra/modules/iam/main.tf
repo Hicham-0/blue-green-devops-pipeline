@@ -1,3 +1,10 @@
+
+# ── Data sources : infos du compte AWS courant ─────────────────
+# Terraform interroge AWS directement, pas besoin de hardcoder
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+
 # ── ECS Execution Role ─────────────────────────────────────────
 # Utilisé par ECS pour lancer les tâches (pull image, logs...)
 
@@ -136,11 +143,18 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      # ECR — push et pull d'images
+      # ECR Auth — contrainte AWS, ne peut techniquement pas être scopé
       {
+        Sid      = "ECRAuth"
+        Effect   = "Allow"
+        Action   = ["ecr:GetAuthorizationToken"]
+        Resource = "*"
+      },
+      # ECR Push/Pull — scopé au repo précis
+      {
+        Sid    = "ECRPush"
         Effect = "Allow"
         Action = [
-          "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
@@ -149,38 +163,33 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "ecr:CompleteLayerUpload",
           "ecr:PutImage"
         ]
-        Resource = "*"
+        Resource = [var.ecr_repository_arn]
       },
-      # CloudWatch Logs — logs de build
+      # CloudWatch Logs — scopé au log group de ce projet CodeBuild
       {
+        Sid    = "CloudWatchLogs"
         Effect = "Allow"
         Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Resource = "*"
+        Resource = [
+          "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project}-${var.environment}*"
+        ]
       },
-      # S3 — artifacts CodePipeline
+      # S3 — scopé au bucket d'artefacts CodePipeline
       {
+        Sid    = "S3Artifacts"
         Effect = "Allow"
         Action = [
           "s3:GetObject",
           "s3:PutObject",
           "s3:GetObjectVersion"
         ]
-        Resource = "*"
-      },
-
-      # codebuild pour savoir le current target group et listeners
-      {
-        Effect = "Allow"
-        Action = [
-          "elasticloadbalancing:DescribeTargetGroups",
-          "elasticloadbalancing:DescribeListeners",
-          "elasticloadbalancing:DescribeLoadBalancers"
+        Resource = [
+          "${var.pipeline_artifact_bucket_arn}/*"
         ]
-        Resource = "*"
       }
     ]
   })
