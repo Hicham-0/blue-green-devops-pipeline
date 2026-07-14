@@ -5,9 +5,9 @@ phases:
     runtime-versions:
       nodejs: 22
     commands:
-      - echo "=== Installation des dépendances (y compris devDependencies pour les tests) ==="
-      - npm ci
-      - echo "=== Installation de Trivy (scanner de vulnérabilités) ==="
+      - echo "=== Installation des dépendances ==="
+      - cd app && npm ci
+      - echo "=== Installation de Trivy ==="
       - wget -qO- https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
   pre_build:
@@ -16,7 +16,7 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
       - echo "=== Exécution des tests unitaires ==="
-      - npm test
+      - cd app && npm test
 
       - echo "=== Calcul du tag de l'image (SHA du commit) ==="
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
@@ -25,14 +25,13 @@ phases:
   build:
     commands:
       - echo "=== Construction de l'image Docker ==="
-      - docker build -t $ECR_REPOSITORY_URL:$IMAGE_TAG .
+      - cd app && docker build -t $ECR_REPOSITORY_URL:$IMAGE_TAG .
 
       - echo "=== Scan de sécurité Trivy ==="
       - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed $ECR_REPOSITORY_URL:$IMAGE_TAG
 
   post_build:
     commands:
-      - echo "=== Push de l'image vers ECR (uniquement si le scan Trivy est passé) ==="
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
+      - echo "=== Push de l'image vers ECR ==="
       - docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
       - echo "=== Push terminé avec succès ==="
