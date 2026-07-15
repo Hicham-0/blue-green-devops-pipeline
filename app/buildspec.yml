@@ -33,6 +33,12 @@ phases:
 
   post_build:
     commands:
-      - echo "=== Push de l'image vers ECR ==="
-      - docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
-      - echo "=== Push terminé avec succès ==="
+      - |
+        if [ "$CODEBUILD_BUILD_SUCCEEDING" = "1" ]; then
+          echo "=== Scan Trivy OK, push de l'image vers ECR ==="
+          docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
+          echo "=== Push terminé avec succès ==="
+        else
+          echo "=== Phase Build échoué, push ANNULÉ ==="
+          exit 1
+        fi

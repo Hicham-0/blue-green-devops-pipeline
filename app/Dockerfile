@@ -1,8 +1,11 @@
-FROM node:26-alpine
+FROM node:24-alpine
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-WORKDIR /app 
+WORKDIR /app
+
+# Mise à jour de npm pour corriger les vulnérabilités connues de versions embarquées
+RUN npm install -g npm@latest
 
 COPY ./package*.json ./
 
