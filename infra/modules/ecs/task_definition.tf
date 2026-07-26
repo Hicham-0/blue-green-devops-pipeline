@@ -12,8 +12,8 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "${var.project}-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"  # 0.25 vCPU
-  memory                   = "512"  # 512 MB
+  cpu                      = "256" # 0.25 vCPU
+  memory                   = "512" # 512 MB
   execution_role_arn       = var.ecs_execution_role_arn
   task_role_arn            = var.ecs_task_role_arn
 

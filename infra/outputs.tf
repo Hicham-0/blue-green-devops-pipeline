@@ -22,3 +22,8 @@ output "artifact_bucket_id" {
   description = "Nom du bucket S3 d'artefacts"
   value       = module.s3.bucket_id
 }
+
+output "alb_dns_name" {
+  value       = module.alb.alb_dns_name
+  description = "URL d'accès à l'application via l'ALB"
+}

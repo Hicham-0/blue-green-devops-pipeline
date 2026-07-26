@@ -15,3 +15,7 @@ output "target_group_blue_arn" {
 output "target_group_green_arn" {
   value = aws_lb_target_group.green.arn
 }
+output "alb_listener_arn" {
+  value       = aws_lb_listener.http.arn
+  description = "ARN du listener HTTP, utilisé comme dépendance par le service ECS"
+}
