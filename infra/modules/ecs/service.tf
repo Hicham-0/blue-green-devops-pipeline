@@ -9,6 +9,11 @@ resource "aws_ecs_service" "app" {
     type = "ECS"
   }
 
+  deployment_configuration {
+    strategy             = "BLUE_GREEN"
+    bake_time_in_minutes = 5
+  }
+
   network_configuration {
     subnets          = var.private_subnet_ids
     security_groups  = [aws_security_group.ecs_tasks.id]
@@ -19,9 +24,19 @@ resource "aws_ecs_service" "app" {
     target_group_arn = var.target_group_blue_arn
     container_name   = "app"
     container_port   = 3000
+
+    advanced_configuration {
+      alternate_target_group_arn = var.target_group_green_arn
+      production_listener_rule   = var.alb_listener_rule_arn
+      role_arn                   = var.ecs_bluegreen_role_arn
+    }
   }
 
   depends_on = [var.alb_listener_arn]
+
+  lifecycle {
+    ignore_changes = [task_definition, load_balancer]
+  }
 
   tags = {
     Name        = "${var.project}-service"

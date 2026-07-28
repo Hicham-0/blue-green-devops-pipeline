@@ -48,3 +48,15 @@ variable "target_group_blue_arn" {
 variable "alb_listener_arn" {
   type = string
 }
+
+variable "target_group_green_arn" {
+  type = string
+}
+
+variable "alb_listener_rule_arn" {
+  type = string
+}
+
+variable "ecs_bluegreen_role_arn" {
+  type = string
+}

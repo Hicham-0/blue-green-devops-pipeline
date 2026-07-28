@@ -57,6 +57,25 @@ resource "aws_codepipeline" "app_pipeline" {
     }
   }
 
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      version         = "1"
+      input_artifacts = ["build_output"]
+
+      configuration = {
+        ClusterName = var.ecs_cluster_name
+        ServiceName = var.ecs_service_name
+        FileName    = "imagedefinitions.json"
+      }
+    }
+  }
+
   tags = {
     Name        = "${var.project}-${var.environment}-pipeline"
     Project     = var.project

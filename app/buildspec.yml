@@ -32,13 +32,22 @@ phases:
       - trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed $ECR_REPOSITORY_URL:$IMAGE_TAG
 
   post_build:
-    commands:
-      - |
-        if [ "$CODEBUILD_BUILD_SUCCEEDING" = "1" ]; then
-          echo "=== Scan Trivy OK, push de l'image vers ECR ==="
-          docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
-          echo "=== Push terminé avec succès ==="
-        else
-          echo "=== Phase Build échoué, push ANNULÉ ==="
-          exit 1
-        fi
+      commands:
+        - |
+          if [ "$CODEBUILD_BUILD_SUCCEEDING" = "1" ]; then
+            echo "=== Scan Trivy OK, push de l'image vers ECR ==="
+            docker push $ECR_REPOSITORY_URL:$IMAGE_TAG
+            echo "=== Push terminé avec succès ==="
+            echo "=== Génération de imagedefinitions.json ==="
+            printf '[{"name":"app","imageUri":"%s"}]' "$ECR_REPOSITORY_URL:$IMAGE_TAG" > $CODEBUILD_SRC_DIR/imagedefinitions.json
+            cat $CODEBUILD_SRC_DIR/imagedefinitions.json
+          else
+            echo "=== Phase Build échoué, push ANNULÉ ==="
+            exit 1
+          fi
+
+artifacts:
+  files:
+    - imagedefinitions.json
+  base-directory: $CODEBUILD_SRC_DIR
+  discard-paths: yes

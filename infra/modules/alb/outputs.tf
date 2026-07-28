@@ -19,3 +19,7 @@ output "alb_listener_arn" {
   value       = aws_lb_listener.http.arn
   description = "ARN du listener HTTP, utilisé comme dépendance par le service ECS"
 }
+
+output "alb_listener_rule_arn" {
+  value = aws_lb_listener_rule.production.arn
+}

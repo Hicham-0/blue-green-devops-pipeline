@@ -36,3 +36,10 @@ variable "artifact_bucket_id" {
   type        = string
   description = "Nom du bucket S3 d'artefacts (module s3)"
 }
+variable "ecs_cluster_name" {
+  type = string
+}
+
+variable "ecs_service_name" {
+  type = string
+}

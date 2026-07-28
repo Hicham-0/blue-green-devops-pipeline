@@ -32,6 +32,8 @@ module "cicd" {
   codepipeline_role_arn = module.iam.codepipeline_role_arn
   ecr_repository_url    = module.ecr.repository_url
   artifact_bucket_id    = module.s3.bucket_id
+  ecs_cluster_name      = module.ecs.cluster_name
+  ecs_service_name      = module.ecs.service_name
 
   github_repository_id = "Hicham-0/blue-green-devops-pipeline"
   github_branch        = "main"
@@ -72,6 +74,9 @@ module "ecs" {
   ecs_execution_role_arn = module.iam.ecs_execution_role_arn
   ecs_task_role_arn      = module.iam.ecs_task_role_arn
 
-  ecr_repository_url = module.ecr.repository_url
-  image_tag          = var.image_tag
+  ecr_repository_url     = module.ecr.repository_url
+  image_tag              = var.image_tag
+  target_group_green_arn = module.alb.target_group_green_arn
+  alb_listener_rule_arn  = module.alb.alb_listener_rule_arn
+  ecs_bluegreen_role_arn = module.iam.ecs_bluegreen_role_arn
 }

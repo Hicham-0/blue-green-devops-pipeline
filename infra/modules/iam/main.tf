@@ -83,34 +83,7 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
   })
 }
 
-# ── CodeDeploy Role ────────────────────────────────────────────
-# Utilisé par CodeDeploy pour manipuler l'ALB et ECS
 
-resource "aws_iam_role" "codedeploy_role" {
-  name = "${var.project}-${var.environment}-codedeploy-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect    = "Allow"
-        Principal = { Service = "codedeploy.amazonaws.com" }
-        Action    = "sts:AssumeRole"
-      }
-    ]
-  })
-
-  tags = {
-    Name        = "${var.project}-${var.environment}-codedeploy-role"
-    Project     = var.project
-    Environment = var.environment
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy_role_policy" {
-  role       = aws_iam_role.codedeploy_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
-}
 
 # ── CodeBuild Role ─────────────────────────────────────────────
 # Utilisé par CodeBuild pour builder et pusher sur ECR
@@ -175,7 +148,7 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "logs:PutLogEvents"
         ]
         Resource = [
-          "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project}-${var.environment}*"
+          "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project}-${var.environment}*"
         ]
       },
       # S3 — scopé au bucket d'artefacts CodePipeline
@@ -252,4 +225,32 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
       }
     ]
   })
+}
+# ── ECS Blue/Green Infrastructure Role ──────────────────────────
+# Permet à ECS de piloter les poids du listener ALB pendant une bascule
+
+resource "aws_iam_role" "ecs_bluegreen_role" {
+  name = "${var.project}-${var.environment}-ecs-bluegreen-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = { Service = "ecs.amazonaws.com" }
+        Action    = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.project}-${var.environment}-ecs-bluegreen-role"
+    Project     = var.project
+    Environment = var.environment
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_bluegreen_role_policy" {
+  role       = aws_iam_role.ecs_bluegreen_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRolePolicyForLoadBalancers"
 }
