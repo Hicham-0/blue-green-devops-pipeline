@@ -214,12 +214,21 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "ecs:ListTasks",
           "ecs:RegisterTaskDefinition",
           "ecs:UpdateService",
+          "ecs:TagResource",
+          "ecs:CreateTaskSet",
+          "ecs:DeleteTaskSet",
+          "ecs:UpdateServicePrimaryTaskSet",
           "iam:PassRole",
           "s3:GetObject",
           "s3:PutObject",
           "s3:GetObjectVersion",
           "s3:GetBucketVersioning",
-          "codestar-connections:UseConnection"
+          "codestar-connections:UseConnection",
+          "elasticloadbalancing:ModifyListener",
+          "elasticloadbalancing:ModifyRule",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeTargetGroups"
         ]
         Resource = "*"
       }
