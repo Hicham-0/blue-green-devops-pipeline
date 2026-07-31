@@ -11,7 +11,7 @@ resource "aws_ecs_service" "app" {
 
   deployment_configuration {
     strategy             = "BLUE_GREEN"
-    bake_time_in_minutes = 5
+    bake_time_in_minutes = 1
   }
 
   network_configuration {
