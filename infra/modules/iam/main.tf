@@ -263,3 +263,23 @@ resource "aws_iam_role_policy_attachment" "ecs_bluegreen_role_policy" {
   role       = aws_iam_role.ecs_bluegreen_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRolePolicyForLoadBalancers"
 }
+
+
+# ── SNS Topic Policy : autorise EventBridge à publier sur le topic de notifications ──
+
+resource "aws_sns_topic_policy" "allow_eventbridge" {
+  arn = var.sns_topic_arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowEventBridgePublish"
+        Effect    = "Allow"
+        Principal = { Service = "events.amazonaws.com" }
+        Action    = "SNS:Publish"
+        Resource  = var.sns_topic_arn
+      }
+    ]
+  })
+}

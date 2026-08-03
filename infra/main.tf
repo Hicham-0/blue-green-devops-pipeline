@@ -20,6 +20,7 @@ module "iam" {
 
   ecr_repository_arn           = module.ecr.repository_arn
   pipeline_artifact_bucket_arn = module.s3.bucket_arn
+  sns_topic_arn = module.sns.sns_topic_arn
 }
 
 module "cicd" {
@@ -79,4 +80,14 @@ module "ecs" {
   target_group_green_arn = module.alb.target_group_green_arn
   alb_listener_rule_arn  = module.alb.alb_listener_rule_arn
   ecs_bluegreen_role_arn = module.iam.ecs_bluegreen_role_arn
+}
+
+module "sns" {
+  source = "./modules/sns"
+
+  project     = var.project
+  environment = var.environment
+
+  notification_email = var.notification_email
+  codepipeline_name   = module.cicd.pipeline_name
 }

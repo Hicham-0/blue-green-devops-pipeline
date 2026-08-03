@@ -26,3 +26,8 @@ variable "vpc_cidr" {
 variable "image_tag" {
   type = string
 }
+variable "notification_email" {
+  type        = string
+  description = "Email pour les notifications de pipeline"
+  sensitive   = true
+}
