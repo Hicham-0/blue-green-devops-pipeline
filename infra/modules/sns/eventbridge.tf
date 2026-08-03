@@ -21,5 +21,14 @@ resource "aws_cloudwatch_event_target" "sns" {
   rule      = aws_cloudwatch_event_rule.pipeline_state_change.name
   target_id = "SendToSNS"
   arn       = aws_sns_topic.pipeline_notifications.arn
-}
 
+   input_transformer {
+    input_paths = {
+      pipeline = "$.detail.pipeline"
+      state    = "$.detail.state"
+      time     = "$.time"
+    }
+
+    input_template = "\"Pipeline <pipeline> : <state> (à <time>)\""
+  }
+}

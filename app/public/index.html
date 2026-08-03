@@ -12,312 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS -->
+  <script src="index.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cream: '#EFE9E1',
-            platinum: '#D9D9D9',
-            warmgray: '#D1C7BD',
-            espresso: '#322D29',
-            burgundy: '#72383D',
-            taupe: '#AC9C8D',
-          },
-          fontFamily: {
-            display: ['Syne', 'Playfair Display', 'serif'],
-            serif: ['Playfair Display', 'serif'],
-            body: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-          },
-          transitionTimingFunction: {
-            luxury: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          },
-        },
-      },
-    };
-  </script>
-
-  <style>
-    :root {
-      --cream: #EFE9E1;
-      --platinum: #D9D9D9;
-      --warmgray: #D1C7BD;
-      --espresso: #322D29;
-      --burgundy: #72383D;
-      --taupe: rgba(172, 156, 141, 0.3);
-      --luxury-bezier: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      --transition: 0.4s var(--luxury-bezier);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-      background-color: var(--cream);
-      color: var(--espresso);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
-    }
-
-    .font-display {
-      font-family: 'Syne', 'Playfair Display', serif;
-    }
-
-    .font-serif {
-      font-family: 'Playfair Display', serif;
-    }
-
-    /* Grid overlay */
-    .grid-overlay {
-      background-image:
-        linear-gradient(var(--taupe) 1px, transparent 1px),
-        linear-gradient(90deg, var(--taupe) 1px, transparent 1px);
-      background-size: 80px 80px;
-      pointer-events: none;
-    }
-
-    /* Status pulse */
-    @keyframes status-pulse {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(114, 56, 61, 0.4);
-      }
-      50% {
-        opacity: 0.85;
-        transform: scale(1.08);
-        box-shadow: 0 0 0 6px rgba(114, 56, 61, 0);
-      }
-    }
-
-    .status-dot {
-      animation: status-pulse 2.4s var(--luxury-bezier) infinite;
-    }
-
-    /* Premium transitions */
-    .transition-luxury {
-      transition: all var(--transition);
-    }
-
-    /* Nav link underline */
-    .nav-link {
-      position: relative;
-    }
-
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 1px;
-      background-color: var(--burgundy);
-      transition: width var(--transition);
-    }
-
-    .nav-link:hover::after {
-      width: 100%;
-    }
-
-    /* CTA button */
-    .btn-primary {
-      background-color: var(--burgundy);
-      color: var(--cream);
-      transition: all var(--transition);
-    }
-
-    .btn-primary:hover {
-      background-color: #5a2d31;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(114, 56, 61, 0.25);
-    }
-
-    .btn-text {
-      position: relative;
-      color: var(--espresso);
-      transition: color var(--transition);
-    }
-
-    .btn-text::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background-color: var(--burgundy);
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform var(--transition);
-    }
-
-    .btn-text:hover {
-      color: var(--burgundy);
-    }
-
-    .btn-text:hover::after {
-      transform: scaleX(1);
-      transform-origin: left;
-    }
-
-    /* Certification badge */
-    .cert-badge {
-      border: 1px solid var(--taupe);
-      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(217,217,217,0.2) 100%);
-      backdrop-filter: blur(8px);
-    }
-
-    /* Project card */
-    .project-card {
-      border: 1px solid var(--taupe);
-      transition: border-color var(--transition), transform var(--transition);
-    }
-
-    .project-card:hover {
-      border-color: var(--burgundy);
-    }
-
-    .project-card .project-image {
-      transition: transform var(--transition);
-    }
-
-    .project-card:hover .project-image {
-      transform: scale(1.02);
-    }
-
-    .project-card .project-image-wrap {
-      overflow: hidden;
-    }
-
-    /* Tag pills */
-    .tag {
-      border: 1px solid var(--taupe);
-      transition: all var(--transition);
-    }
-
-    .project-card:hover .tag {
-      border-color: rgba(114, 56, 61, 0.4);
-    }
-
-    /* Skills bento */
-    .skill-cell {
-      border: 1px solid var(--taupe);
-      transition: all var(--transition);
-    }
-
-    .skill-cell:hover {
-      border-color: rgba(114, 56, 61, 0.5);
-      background-color: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Social links */
-    .social-link {
-      position: relative;
-      display: inline-block;
-      transition: color var(--transition);
-    }
-
-    .social-link::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background-color: var(--burgundy);
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform var(--transition);
-    }
-
-    .social-link:hover {
-      color: var(--burgundy);
-    }
-
-    .social-link:hover::after {
-      transform: scaleX(1);
-      transform-origin: left;
-    }
-
-    /* Fade-up initial state */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-
-    /* Header blur on scroll */
-    .header-scrolled {
-      background-color: rgba(239, 233, 225, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--taupe);
-    }
-
-    /* Pillar numbers */
-    .pillar-num {
-      font-family: 'Syne', sans-serif;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.05em;
-    }
-
-    /* Architecture placeholder patterns */
-    .arch-pattern-1 {
-      background:
-        linear-gradient(135deg, #D1C7BD 0%, #AC9C8D 40%, #322D29 100%);
-    }
-
-    .arch-pattern-2 {
-      background:
-        linear-gradient(180deg, #D9D9D9 0%, #D1C7BD 50%, rgba(50,45,41,0.15) 100%);
-    }
-
-    .arch-pattern-3 {
-      background:
-        linear-gradient(45deg, #322D29 0%, #72383D 35%, #D1C7BD 100%);
-    }
-
-    /* Monogram */
-    .monogram {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    /* Focus styles */
-    a:focus-visible,
-    button:focus-visible {
-      outline: 2px solid var(--burgundy);
-      outline-offset: 3px;
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      .status-dot {
-        animation: none;
-      }
-
-      .fade-up {
-        opacity: 1;
-        transform: none;
-      }
-
-      *, *::before, *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -452,75 +149,84 @@
           </p>
         </div>
 
-        <!-- Project 01 — offset right -->
-        <article class="fade-up project-card bg-cream mb-6 lg:mb-8 lg:ml-auto lg:w-[88%]" aria-labelledby="project-1-title">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
-            <div class="project-image-wrap lg:col-span-7 aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
-              <div class="project-image w-full h-full arch-pattern-1" role="img" aria-label="Event-driven serverless AWS architecture"></div>
-            </div>
-            <div class="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-[rgba(172,156,141,0.3)]">
-              <span class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-burgundy mb-4">Project 01</span>
-              <h3 id="project-1-title" class="font-display text-2xl lg:text-3xl font-semibold text-espresso mb-4 leading-tight">
-                Event-Driven Serverless Architecture on AWS
-              </h3>
-              <p class="font-body text-sm text-espresso/65 leading-relaxed mb-6">
-                Engineered a fully serverless pipeline — zero EC2 footprint — for asynchronous image processing, orchestrated through S3 event-driven triggers that decouple ingestion from compute. Paired with a static front end hosted on S3 and distributed globally via CloudFront for sub-second, low-latency delivery at the edge.
-              </p>
-              <div class="flex flex-wrap gap-2" aria-label="Technology stack">
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">AWS</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">S3</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Lambda</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">CloudFront</span>
+        <!-- Project 01 -->
+        <article class="fade-up project-card bg-cream mb-6 lg:mb-8 lg:w-[88%] mx-auto" aria-labelledby="project-1-title">
+          <div class="p-8 lg:p-12">
+            <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] items-start">
+              <div>
+                <span class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-burgundy mb-4 block">Project 01</span>
+                <h3 id="project-1-title" class="font-display text-2xl lg:text-3xl font-semibold text-espresso mb-4 leading-tight">
+                  Event-Driven Serverless Architecture on AWS
+                </h3>
+                <p class="font-body text-sm text-espresso/65 leading-relaxed mb-6">
+                  Engineered a fully serverless pipeline — zero EC2 footprint — for asynchronous image processing, orchestrated through S3 event-driven triggers that decouple ingestion from compute. Paired with a static front end hosted on S3 and distributed globally via CloudFront for sub-second, low-latency delivery at the edge.
+                </p>
+                <div class="flex flex-wrap gap-2" aria-label="Technology stack">
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">AWS</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">S3</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Lambda</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">CloudFront</span>
+                </div>
               </div>
+              <aside class="project-highlights rounded-[20px] border border-[rgba(114,56,61,0.1)] bg-[rgba(239,233,225,0.78)] p-6">
+                <p class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-espresso/60 mb-4">Highlights</p>
+                <ul class="space-y-3">
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    Event-driven architecture using S3 triggers and Lambda
+                  </li>
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    Zero EC2 footprint with fully serverless compute
+                  </li>
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    Global edge delivery via CloudFront for fast performance
+                  </li>
+                </ul>
+              </aside>
             </div>
           </div>
         </article>
 
-        <!-- Project 02 — offset left -->
-        <article class="fade-up project-card bg-cream mb-6 lg:mb-8 lg:w-[88%]" aria-labelledby="project-2-title">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
-            <div class="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-center order-2 lg:order-1 border-t lg:border-t-0 lg:border-r border-[rgba(172,156,141,0.3)]">
-              <span class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-burgundy mb-4">Project 02</span>
-              <h3 id="project-2-title" class="font-display text-2xl lg:text-3xl font-semibold text-espresso mb-4 leading-tight">
-                Multi-AZ Cloud Infrastructure for Scalable Web Applications
-              </h3>
-              <p class="font-body text-sm text-espresso/65 leading-relaxed mb-6">
-                Designed a highly available cloud environment spanning multiple availability zones, built to absorb traffic spikes without compromising uptime. Network topology separates public-facing and private tiers with deliberate subnet isolation, while security groups enforce granular ingress and egress control across every layer.
-              </p>
-              <div class="flex flex-wrap gap-2" aria-label="Technology stack">
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">AWS</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">VPC</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Multi-AZ</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Security Groups</span>
+        <!-- Project 02 -->
+        <article class="fade-up project-card bg-cream mb-6 lg:mb-8 lg:w-[88%] mx-auto" aria-labelledby="project-2-title">
+          <div class="p-8 lg:p-12">
+            <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] items-start">
+              <div>
+                <span class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-burgundy mb-4 block">Project 02</span>
+                <h3 id="project-2-title" class="font-display text-2xl lg:text-3xl font-semibold text-espresso mb-4 leading-tight">
+                  CI/CD Pipeline &amp; Containerized AWS Infrastructure (ECS + ALB)
+                </h3>
+                <p class="font-body text-sm text-espresso/65 leading-relaxed mb-6">
+                  Designed and implemented a CI/CD pipeline and Terraform-managed AWS infrastructure for a Dockerized Node.js application. ALB routes traffic to ECS Fargate tasks in private subnets, with ECR image registry, build and scan stages powered by CodeBuild and Trivy, and blue/green deployment orchestration through CodePipeline.
+                </p>
+                <div class="flex flex-wrap gap-2" aria-label="Technology stack">
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Terraform</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">ECS</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">ALB</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">CI/CD</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Docker</span>
+                  <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">ECR</span>
+                </div>
               </div>
-            </div>
-            <div class="project-image-wrap lg:col-span-7 aspect-[16/10] lg:aspect-auto lg:min-h-[380px] order-1 lg:order-2">
-              <div class="project-image w-full h-full arch-pattern-2" role="img" aria-label="Multi-AZ cloud infrastructure architecture"></div>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 03 — offset right -->
-        <article class="fade-up project-card bg-cream lg:ml-auto lg:w-[88%]" aria-labelledby="project-3-title">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
-            <div class="project-image-wrap lg:col-span-7 aspect-[16/10] lg:aspect-auto lg:min-h-[380px]">
-              <div class="project-image w-full h-full arch-pattern-3" role="img" aria-label="Secure network infrastructure visualization placeholder"></div>
-            </div>
-            <div class="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-[rgba(172,156,141,0.3)]">
-              <span class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-burgundy mb-4">Project 03</span>
-              <h3 id="project-3-title" class="font-display text-2xl lg:text-3xl font-semibold text-espresso mb-4 leading-tight">
-                Hardened Network Security Framework
-              </h3>
-              <p class="font-body text-sm text-espresso/65 leading-relaxed mb-6">
-                <!-- Placeholder: full case study text to follow -->
-                Architected a segmented network topology with firewall rule automation, intrusion detection integration, and encrypted service mesh communication across hybrid cloud boundaries.
-              </p>
-              <div class="flex flex-wrap gap-2" aria-label="Technology stack">
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Linux</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Ansible</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">AWS</span>
-                <span class="tag px-3 py-1 text-[11px] font-body font-medium text-espresso/70 uppercase tracking-wider">Terraform</span>
-              </div>
+              <aside class="project-highlights rounded-[20px] border border-[rgba(114,56,61,0.1)] bg-[rgba(239,233,225,0.76)] p-6">
+                <p class="font-body text-[10px] font-bold uppercase tracking-[0.2em] text-espresso/60 mb-4">Highlights</p>
+                <ul class="space-y-3">
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    Blue/green release strategy
+                  </li>
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    Terraform-managed ALB &amp; ECS platform
+                  </li>
+                  <li class="font-body text-sm text-espresso/75 leading-relaxed flex items-start gap-3">
+                    <span class="highlight-dot mt-1"></span>
+                    CI/CD with build, scan, and deploy stages
+                  </li>
+                </ul>
+              </aside>
             </div>
           </div>
         </article>
@@ -542,7 +248,7 @@
         </div>
 
         <!-- Bento Grid -->
-        <div class="fade-up grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(172,156,141,0.3)]">
+        <div class="fade-up grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <!-- Orchestration & Cloud -->
           <div class="skill-cell bg-warmgray p-8 lg:p-10 md:col-span-1">
@@ -702,120 +408,6 @@
   <!-- GSAP + ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <script>
-    (function () {
-      'use strict';
-
-      /* ── Register GSAP plugin ── */
-      gsap.registerPlugin(ScrollTrigger);
-
-      /* ── Respect reduced motion ── */
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (!prefersReducedMotion) {
-        /* ── Fade-up animations for all major blocks ── */
-        const fadeElements = document.querySelectorAll('.fade-up');
-
-        fadeElements.forEach(function (el) {
-          gsap.to(el, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 88%',
-              toggleActions: 'play none none none',
-            },
-          });
-        });
-
-        /* ── Stagger pillar blocks in validation section ── */
-        const pillars = document.querySelectorAll('.pillar-block');
-        if (pillars.length) {
-          gsap.set(pillars, { opacity: 0, y: 40 });
-          gsap.to(pillars, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            stagger: 0.12,
-            scrollTrigger: {
-              trigger: '#validation',
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-        /* ── Hero entrance on load ── */
-        const heroItems = document.querySelectorAll('#hero .fade-up');
-        gsap.to(heroItems, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          stagger: 0.15,
-          delay: 0.2,
-        });
-      } else {
-        /* Instantly reveal for reduced motion */
-        document.querySelectorAll('.fade-up').forEach(function (el) {
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-        });
-      }
-
-      /* ── Header scroll state ── */
-      const header = document.getElementById('header');
-      let lastScroll = 0;
-
-      function updateHeader() {
-        const scrollY = window.scrollY;
-        if (scrollY > 40) {
-          header.classList.add('header-scrolled');
-        } else {
-          header.classList.remove('header-scrolled');
-        }
-        lastScroll = scrollY;
-      }
-
-      window.addEventListener('scroll', updateHeader, { passive: true });
-      updateHeader();
-
-      /* ── Smooth anchor scrolling with offset for fixed header ── */
-      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-        anchor.addEventListener('click', function (e) {
-          const targetId = this.getAttribute('href');
-          if (targetId === '#') return;
-
-          const target = document.querySelector(targetId);
-          if (!target) return;
-
-          e.preventDefault();
-
-          const headerHeight = header.offsetHeight;
-          const targetPosition = target.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
-
-          window.scrollTo({
-            top: targetPosition,
-            behavior: prefersReducedMotion ? 'auto' : 'smooth',
-          });
-        });
-      });
-
-      /* ── Refresh ScrollTrigger on resize ── */
-      let resizeTimer;
-      window.addEventListener('resize', function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-          ScrollTrigger.refresh();
-        }, 250);
-      });
-
-    })();
-  </script>
 
 </body>
 </html>
