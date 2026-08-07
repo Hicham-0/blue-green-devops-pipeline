@@ -11,6 +11,8 @@ npm-debug.log
 !terraform.tfvars.example
 crash.log
 crash.*.log
+backend.hcl
+
 
 
 # Divers
