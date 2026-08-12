@@ -20,3 +20,31 @@ variable "sns_topic_arn" {
   type        = string
   description = "ARN du topic SNS de notifications, pour lui attacher la policy EventBridge"
 }
+
+variable "codebuild_project_arn" {
+  type = string
+}
+
+variable "ecs_cluster_name" {
+  type = string
+}
+
+variable "ecs_task_family" {
+  type = string
+}
+
+variable "alb_listener_arn" {
+  type = string
+}
+
+variable "alb_listener_rule_arn" {
+  type = string
+}
+
+variable "codestar_connection_arn" {
+  type = string
+}
+
+variable "ecs_log_group_arn" {
+  type = string
+}

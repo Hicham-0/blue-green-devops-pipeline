@@ -1,18 +1,15 @@
 
-# ── Data sources : infos du compte AWS courant ─────────────────
-# Terraform interroge AWS directement, pas besoin de hardcoder
+# Data sources 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 
-# ── ECS Execution Role ─────────────────────────────────────────
-# Utilisé par ECS pour lancer les tâches (pull image, logs...)
+#  ECS Execution Role
 
 resource "aws_iam_role" "ecs_execution_role" {
   name = "${var.project}-${var.environment}-ecs-execution-role"
 
-  # Trust policy — qui peut assumer ce rôle ?
-  # Réponse : ECS (le service qui lance les conteneurs)
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -31,14 +28,14 @@ resource "aws_iam_role" "ecs_execution_role" {
   }
 }
 
-# Politique AWS managée — couvre ECR pull + CloudWatch logs
+# ECR pull + CloudWatch logs
 resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# ── ECS Task Role ──────────────────────────────────────────────
-# Utilisé par TON APPLICATION pendant qu'elle tourne
+# ECS Task Role
+
 
 resource "aws_iam_role" "ecs_task_role" {
   name = "${var.project}-${var.environment}-ecs-task-role"
@@ -62,7 +59,6 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 # Politique custom pour le Task Role
-# Pour l'instant : CloudWatch logs uniquement
 resource "aws_iam_role_policy" "ecs_task_role_policy" {
   name = "${var.project}-${var.environment}-ecs-task-policy"
   role = aws_iam_role.ecs_task_role.id
@@ -77,7 +73,7 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = ["${var.ecs_log_group_arn}:*"]
       }
     ]
   })
@@ -85,8 +81,7 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
 
 
 
-# ── CodeBuild Role ─────────────────────────────────────────────
-# Utilisé par CodeBuild pour builder et pusher sur ECR
+# CodeBuild Role
 
 resource "aws_iam_role" "codebuild_role" {
   name = "${var.project}-${var.environment}-codebuild-role"
@@ -116,14 +111,14 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      # ECR Auth — contrainte AWS, ne peut techniquement pas être scopé
+      # ECR Auth
       {
         Sid      = "ECRAuth"
         Effect   = "Allow"
         Action   = ["ecr:GetAuthorizationToken"]
         Resource = "*"
       },
-      # ECR Push/Pull — scopé au repo précis
+      # ECR Push/Pull 
       {
         Sid    = "ECRPush"
         Effect = "Allow"
@@ -138,7 +133,7 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         ]
         Resource = [var.ecr_repository_arn]
       },
-      # CloudWatch Logs — scopé au log group de ce projet CodeBuild
+      # CloudWatch Logs 
       {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
@@ -151,7 +146,7 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${var.project}-${var.environment}*"
         ]
       },
-      # S3 — scopé au bucket d'artefacts CodePipeline
+      # S3 
       {
         Sid    = "S3Artifacts"
         Effect = "Allow"
@@ -168,7 +163,7 @@ resource "aws_iam_role_policy" "codebuild_policy" {
   })
 }
 
-# ── CodePipeline Role ──────────────────────────────────────────
+# CodePipeline Role 
 resource "aws_iam_role" "codepipeline_role" {
   name = "${var.project}-${var.environment}-codepipeline-role"
 
@@ -198,45 +193,85 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid      = "CodeBuildAccess"
+        Effect   = "Allow"
+        Action   = ["codebuild:BatchGetBuilds", "codebuild:StartBuild"]
+        Resource = [var.codebuild_project_arn]
+      },
+      {
+        # ecs:DescribeTaskDefinition et ecs:RegisterTaskDefinition n'acceptent pas
+        # de restriction par ARN — limitation documentée par AWS, Resource = "*" obligatoire
+        Sid      = "TaskDefinitionPermissions"
+        Effect   = "Allow"
+        Action   = ["ecs:DescribeTaskDefinition", "ecs:RegisterTaskDefinition"]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "ECSServicePermissions"
         Effect = "Allow"
-        Action = [
-          "codebuild:BatchGetBuilds",
-          "codebuild:StartBuild",
-          "codedeploy:CreateDeployment",
-          "codedeploy:GetDeployment",
-          "codedeploy:GetApplication",
-          "codedeploy:GetApplicationRevision",
-          "codedeploy:RegisterApplicationRevision",
-          "codedeploy:GetDeploymentConfig",
-          "ecs:DescribeServices",
-          "ecs:DescribeTaskDefinition",
-          "ecs:DescribeTasks",
-          "ecs:ListTasks",
-          "ecs:RegisterTaskDefinition",
-          "ecs:UpdateService",
-          "ecs:TagResource",
-          "ecs:CreateTaskSet",
-          "ecs:DeleteTaskSet",
-          "ecs:UpdateServicePrimaryTaskSet",
-          "iam:PassRole",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:GetObjectVersion",
-          "s3:GetBucketVersioning",
-          "codestar-connections:UseConnection",
-          "elasticloadbalancing:ModifyListener",
-          "elasticloadbalancing:ModifyRule",
-          "elasticloadbalancing:DescribeListeners",
-          "elasticloadbalancing:DescribeRules",
-          "elasticloadbalancing:DescribeTargetGroups"
+        Action = ["ecs:DescribeServices", "ecs:UpdateService"]
+        Resource = [
+          "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:service/${var.ecs_cluster_name}/*"
         ]
-        Resource = "*"
+      },
+      {
+        Sid    = "ECSTaskSetPermissions"
+        Effect = "Allow"
+        Action = ["ecs:CreateTaskSet", "ecs:DeleteTaskSet", "ecs:UpdateServicePrimaryTaskSet"]
+        Resource = [
+          "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:task-set/${var.ecs_cluster_name}/*"
+        ]
+      },
+      {
+        Sid    = "ECSTagResource"
+        Effect = "Allow"
+        Action = ["ecs:TagResource"]
+        Resource = [
+          "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:task-definition/${var.ecs_task_family}:*"
+        ]
+        Condition = {
+          StringEquals = { "ecs:CreateAction" = ["RegisterTaskDefinition"] }
+        }
+      },
+      {
+        Sid      = "IamPassRolePermissions"
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
+        Resource = [aws_iam_role.ecs_execution_role.arn, aws_iam_role.ecs_task_role.arn]
+        Condition = {
+          StringEquals = { "iam:PassedToService" = ["ecs.amazonaws.com", "ecs-tasks.amazonaws.com"] }
+        }
+      },
+      {
+        Sid      = "S3Artifacts"
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject", "s3:GetObjectVersion", "s3:GetBucketVersioning"]
+        Resource = [var.pipeline_artifact_bucket_arn, "${var.pipeline_artifact_bucket_arn}/*"]
+      },
+      {
+        Sid      = "CodeStarConnection"
+        Effect   = "Allow"
+        Action   = ["codestar-connections:UseConnection"]
+        Resource = [var.codestar_connection_arn]
+      },
+      {
+        Sid      = "ELBWeightedRouting"
+        Effect   = "Allow"
+        Action   = ["elasticloadbalancing:ModifyListener", "elasticloadbalancing:ModifyRule"]
+        Resource = [var.alb_listener_arn, var.alb_listener_rule_arn]
+      },
+      {
+        # Les actions Describe* n'acceptent généralement pas de restriction par ARN
+        Sid      = "ELBDescribe"
+        Effect   = "Allow"
+        Action   = ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeRules", "elasticloadbalancing:DescribeTargetGroups"]
+        Resource = ["*"]
       }
     ]
   })
 }
-# ── ECS Blue/Green Infrastructure Role ──────────────────────────
-# Permet à ECS de piloter les poids du listener ALB pendant une bascule
+
+# ECS Blue/Green Infrastructure Role
 
 resource "aws_iam_role" "ecs_bluegreen_role" {
   name = "${var.project}-${var.environment}-ecs-bluegreen-role"
@@ -265,7 +300,7 @@ resource "aws_iam_role_policy_attachment" "ecs_bluegreen_role_policy" {
 }
 
 
-# ── SNS Topic Policy : autorise EventBridge à publier sur le topic de notifications ──
+# SNS Topic Policy
 
 resource "aws_sns_topic_policy" "allow_eventbridge" {
   arn = var.sns_topic_arn

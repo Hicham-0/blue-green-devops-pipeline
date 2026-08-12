@@ -10,3 +10,6 @@ output "pipeline_name" {
 output "codestar_connection_arn" {
   value = aws_codestarconnections_connection.github.arn
 }
+output "codebuild_project_arn" {
+  value = aws_codebuild_project.app_build.arn
+}

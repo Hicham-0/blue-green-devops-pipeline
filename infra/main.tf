@@ -18,9 +18,17 @@ module "iam" {
   project     = var.project
   environment = var.environment
 
-  ecr_repository_arn           = module.ecr.repository_arn
-  pipeline_artifact_bucket_arn = module.s3.bucket_arn
-  sns_topic_arn = module.sns.sns_topic_arn
+  ecr_repository_arn            = module.ecr.repository_arn
+  pipeline_artifact_bucket_arn  = module.s3.bucket_arn
+  sns_topic_arn                 = module.sns.sns_topic_arn
+
+  codebuild_project_arn   = module.cicd.codebuild_project_arn
+  ecs_cluster_name        = module.ecs.cluster_name
+  ecs_task_family          = module.ecs.task_family
+  alb_listener_arn        = module.alb.alb_listener_arn
+  alb_listener_rule_arn   = module.alb.alb_listener_rule_arn
+  codestar_connection_arn = module.cicd.codestar_connection_arn
+  ecs_log_group_arn       = module.ecs.ecs_log_group_arn
 }
 
 module "cicd" {
@@ -89,5 +97,5 @@ module "sns" {
   environment = var.environment
 
   notification_email = var.notification_email
-  codepipeline_name   = module.cicd.pipeline_name
+  codepipeline_name  = module.cicd.pipeline_name
 }

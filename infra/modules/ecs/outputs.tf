@@ -12,3 +12,9 @@ output "ecs_tasks_security_group_id" {
 output "service_name" {
   value = aws_ecs_service.app.name
 }
+output "ecs_log_group_arn" {
+  value = aws_cloudwatch_log_group.app.arn
+}
+output "task_family" {
+  value = aws_ecs_task_definition.app.family
+}

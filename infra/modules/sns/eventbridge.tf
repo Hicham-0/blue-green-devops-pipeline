@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "sns" {
   target_id = "SendToSNS"
   arn       = aws_sns_topic.pipeline_notifications.arn
 
-   input_transformer {
+  input_transformer {
     input_paths = {
       pipeline = "$.detail.pipeline"
       state    = "$.detail.state"
